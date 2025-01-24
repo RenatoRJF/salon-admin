@@ -1,0 +1,60 @@
+@import "react-big-calendar/lib/sass/styles"; // Import default styles
+
+// general background color
+.rbc-today,
+.rbc-calendar {
+  background-color: var(--surface-background);
+}
+
+.rbc-events-container {
+  gap: 16px;
+  width: 100%;
+  overflow-x: auto;
+  display: inline-flex;
+  padding-inline-end: 16px;
+  padding-inline-start: 16px;
+}
+
+// event styles
+.rbc-day-slot .rbc-event {
+  padding: 24px;
+  margin-top: 8px;
+  width: auto !important;
+  background-color: #e64a19;
+}
+
+.rbc-event.rbc-selected,
+.rbc-event:hover {
+  background-color: #e64a19;
+}
+
+// time slot styles
+.rbc-timeslot-group {
+  min-height: 200px;
+}
+
+.rbc-day-slot .rbc-time-slot {
+  position: relative;
+  border-top: 1px dashed var(--secondary-text-color);
+}
+
+// current time indicator styles
+.rbc-current-time-indicator {
+  height: 2px;
+  background-color: var(--primary-color);
+}
+
+// hides time header
+.rbc-time-header {
+  display: none;
+}
+
+// remove general borders
+.rbc-time-gutter,
+.rbc-time-column,
+.rbc-time-view,
+.rbc-time-content,
+.rbc-timeslot-group,
+.rbc-time-content > * + * > * {
+  border: 0;
+}
