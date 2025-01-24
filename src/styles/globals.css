@@ -1,0 +1,25 @@
+@layer tailwind-base, tailwind-utilities;
+
+@layer tailwind-base {
+  @tailwind base;
+}
+
+@layer tailwind-utilities {
+  @tailwind components;
+  @tailwind utilities;
+}
+
+:root {
+  --primary-color: #818cf8;
+  --primary-text-color: #ffffff;
+  --secondary-text-color: #9ca3af;
+  --surface-background: #1f2937;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-size: 14px;
+}
