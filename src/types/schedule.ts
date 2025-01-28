@@ -1,5 +1,6 @@
 export interface CustomEventProps {
   end: Date;
+  id: string;
   start: Date;
   name: string;
   title: string;
