@@ -24,6 +24,7 @@ export default function DashboardPage() {
   const { data, isFetching } = useQuery({
     queryKey: ["get-schedules-by-date", date],
     queryFn: () => getSchedulesByDate(date as Date),
+    initialData: []
   });
 
   return (
@@ -67,7 +68,7 @@ export default function DashboardPage() {
             <ProgressBar mode="indeterminate" className="!h-[2px]" />
           </div>
         )}
-        <AppCalendar events={data ?? []} />
+        <AppCalendar events={data} date={date} />
       </div>
     </div>
   );

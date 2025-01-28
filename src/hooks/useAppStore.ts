@@ -3,19 +3,20 @@
 import { create } from "zustand";
 
 interface StorePros {
+  isAppLoading: boolean;
   isSidebarOpen: boolean;
   toggleSidebar: () => void;
+  setIsAppLoading: (value: boolean) => void;
 }
 
 const useAppStore = create<StorePros>((set) => {
-  let isSidebarOpen: string | null = "yes";
-
-  if (typeof window !== "undefined") {
-    isSidebarOpen = window.localStorage.getItem("isSidebarOpen");
-  }
-
   return {
-    isSidebarOpen: isSidebarOpen === "yes",
+    isAppLoading: true,
+    isSidebarOpen: true,
+
+    setIsAppLoading: (value) => {
+      return set(() => ({ isAppLoading: value }));
+    },
     toggleSidebar: () => {
       return set((state) => {
         const isOpen = !state.isSidebarOpen;

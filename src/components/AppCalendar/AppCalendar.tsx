@@ -11,7 +11,10 @@ import CustomTimeSlotWrapper from "./CustomTimeSlotWrapper";
 
 const localizer = dayjsLocalizer(dayjs);
 
-export default function AppCalendar({ events }: AppCalendarProps) {
+const MIN_HOUR = new Date(2000, 0, 1, 9, 0);
+const MAX_HOUR = new Date(3000, 0, 1, 17, 0);
+
+export default function AppCalendar({ events, date }: AppCalendarProps) {
   const { components, defaultDate } = useMemo(
     () => ({
       components: {
@@ -27,14 +30,15 @@ export default function AppCalendar({ events }: AppCalendarProps) {
   return (
     <Calendar
       ref={null}
+      min={MIN_HOUR}
+      max={MAX_HOUR}
       events={events}
       views={["day"]}
       defaultView="day"
       localizer={localizer}
       components={components}
       defaultDate={defaultDate}
-      min={new Date(2025, 0, 23, 9, 0)}
-      max={new Date(2025, 0, 23, 18, 0)}
+      date={date ?? defaultDate}
     />
   );
 }
