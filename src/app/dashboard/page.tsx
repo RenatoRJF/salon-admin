@@ -1,17 +1,18 @@
 "use client";
 
+import cx from "classnames";
 import { useState } from "react";
 import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
 import { Nullable } from "primereact/ts-helpers";
 import { useQuery } from "@tanstack/react-query";
+import { ProgressBar } from "primereact/progressbar";
 
 import useAppStore from "@/hooks/useAppStore";
-import { getSchedulesByDate } from "@/api/api";
 import { useIsSmallScreen } from "@/hooks/useIsSmallScreen";
 import AppCalendar from "@/components/AppCalendar/AppCalendar";
-import { ProgressBar } from "primereact/progressbar";
+import { getSchedulesByDate, getSchedulesDates } from "@/api/api";
 
 const options = [{ value: "all", label: "All appointments" }];
 
@@ -24,7 +25,13 @@ export default function DashboardPage() {
   const { data, isFetching } = useQuery({
     queryKey: ["get-schedules-by-date", date],
     queryFn: () => getSchedulesByDate(date as Date),
-    initialData: []
+    initialData: [],
+  });
+
+  const { data: enabledDates, isFetching: isFetchingEnabledDates } = useQuery({
+    queryKey: ["get-schedules-dates"],
+    queryFn: getSchedulesDates,
+    initialData: [],
   });
 
   return (
@@ -42,7 +49,10 @@ export default function DashboardPage() {
             showIcon
             value={date}
             iconPos="left"
-            icon="pi pi-calendar"
+            icon={cx("pi pi-calendar", {
+              "pi-spin pi-spinner": isFetchingEnabledDates,
+            })}
+            enabledDates={enabledDates}
             className="flex-1 md:flex-none"
             onChange={(e) => setDate(e.value)}
           />
@@ -68,6 +78,7 @@ export default function DashboardPage() {
             <ProgressBar mode="indeterminate" className="!h-[2px]" />
           </div>
         )}
+
         <AppCalendar events={data} date={date} />
       </div>
     </div>
