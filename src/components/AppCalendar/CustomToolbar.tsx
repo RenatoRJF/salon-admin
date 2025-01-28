@@ -1,7 +1,8 @@
 import cx from "classnames";
 import { Chip } from "primereact/chip";
+import { Statuses } from "@/@types/schedule";
 
-import { CalendarToolbarProps, Statuses } from "./AppCalendar.types";
+import { CalendarToolbarProps } from "./AppCalendar.types";
 
 export default function CustomToolbar({ children }: CalendarToolbarProps) {
   const renderChip = (status: Statuses) => {

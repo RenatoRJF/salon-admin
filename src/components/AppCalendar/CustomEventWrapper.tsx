@@ -5,7 +5,7 @@ import { Tag } from "primereact/tag";
 import { EventWrapperProps } from "react-big-calendar";
 
 import UserInfo from "../UserInfo/UserInfo";
-import { CustomEventProps, Statuses } from "./AppCalendar.types";
+import { CustomEventProps, Statuses } from "@/@types/schedule";
 
 const CustomEventWrapper = ({
   event,
@@ -56,9 +56,7 @@ const CustomEventWrapper = ({
           occupation={event.occupation}
         />
 
-        <div className="mt-2 text-lg font-semibold">
-          {event.title}
-        </div>
+        <div className="mt-2 text-lg font-semibold">{event.title}</div>
 
         <div className="flex items-center gap-2">
           <i className="pi pi-calendar text-lg" />

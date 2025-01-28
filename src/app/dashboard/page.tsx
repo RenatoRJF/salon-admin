@@ -5,52 +5,26 @@ import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
 import { Nullable } from "primereact/ts-helpers";
+import { useQuery } from "@tanstack/react-query";
 
-import {
-  Statuses,
-  CustomEventProps,
-} from "@/components/AppCalendar/AppCalendar.types";
 import useAppStore from "@/hooks/useAppStore";
+import { getSchedulesByDate } from "@/api/api";
 import { useIsSmallScreen } from "@/hooks/useIsSmallScreen";
 import AppCalendar from "@/components/AppCalendar/AppCalendar";
+import { ProgressBar } from "primereact/progressbar";
 
 const options = [{ value: "all", label: "All appointments" }];
-
-const events: CustomEventProps[] = [
-  {
-    name: "Sandra Black",
-    title: "Hair cut & color",
-    status: Statuses.COMPLETED,
-    occupation: "Hair cut & makeup",
-    end: new Date(2025, 0, 23, 10, 30),
-    start: new Date(2025, 0, 23, 9, 30),
-    avatar: "https://randomuser.me/api/portraits/men/2.jpg",
-  },
-  {
-    name: "Miguel Peterson",
-    title: "Nail cut & paint",
-    status: Statuses.CANCELED,
-    occupation: "Hair cut & makeup",
-    start: new Date(2025, 0, 23, 10, 30),
-    end: new Date(2025, 0, 23, 11, 0),
-    avatar: "https://randomuser.me/api/portraits/men/2.jpg",
-  },
-  {
-    name: "Janet Smith",
-    title: "Skin cleaning",
-    status: Statuses.BOOKED,
-    occupation: "Hair cut & makeup",
-    start: new Date(2025, 0, 23, 12, 0),
-    end: new Date(2025, 0, 23, 13, 0),
-    avatar: "https://randomuser.me/api/portraits/men/2.jpg",
-  },
-];
 
 export default function DashboardPage() {
   const { isSmall } = useIsSmallScreen();
   const [filter, setFilter] = useState("all");
   const { isSidebarOpen, toggleSidebar } = useAppStore();
   const [date, setDate] = useState<Nullable<Date>>(new Date());
+
+  const { data, isFetching } = useQuery({
+    queryKey: ["get-schedules-by-date", date],
+    queryFn: () => getSchedulesByDate(date as Date),
+  });
 
   return (
     <div className="h-screen flex flex-col">
@@ -87,8 +61,13 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      <div className="flex-1 overflow-auto">
-        <AppCalendar events={events} />
+      <div className="flex-1 overflow-auto relative">
+        {isFetching && (
+          <div className="absolute top-0 w-full">
+            <ProgressBar mode="indeterminate" className="!h-[2px]" />
+          </div>
+        )}
+        <AppCalendar events={data ?? []} />
       </div>
     </div>
   );

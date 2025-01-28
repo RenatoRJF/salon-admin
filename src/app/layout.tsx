@@ -3,6 +3,7 @@
 import { ReactNode } from "react";
 import { PrimeReactProvider } from "primereact/api";
 import { Geist, Geist_Mono } from "next/font/google";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
 import "@/styles/globals.css";
 
@@ -21,6 +22,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const queryClient = new QueryClient();
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -35,13 +38,15 @@ export default function RootLayout({
         />
       </head>
 
-      <PrimeReactProvider value={{ ripple: true }}>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
-          {children}
-        </body>
-      </PrimeReactProvider>
+      <QueryClientProvider client={queryClient}>
+        <PrimeReactProvider value={{ ripple: true }}>
+          <body
+            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          >
+            {children}
+          </body>
+        </PrimeReactProvider>
+      </QueryClientProvider>
     </html>
   );
 }

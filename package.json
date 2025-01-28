@@ -12,6 +12,7 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.65.0",
     "@types/react-big-calendar": "^1.16.1",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.13",
