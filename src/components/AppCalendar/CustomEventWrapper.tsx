@@ -5,7 +5,7 @@ import { Tag } from "primereact/tag";
 import { EventWrapperProps } from "react-big-calendar";
 
 import UserInfo from "../UserInfo/UserInfo";
-import { CustomEventProps, Statuses } from "@/@types/schedule";
+import { CustomEventProps, Statuses } from "@/types/schedule";
 
 const CustomEventWrapper = ({
   event,
@@ -32,7 +32,7 @@ const CustomEventWrapper = ({
 
   const formattedTime = useMemo(() => {
     const startTime = dayjs(event.start).format("hh:mm A");
-    const endTime = dayjs(event.start).format("hh:mm A");
+    const endTime = dayjs(event.end).format("hh:mm A");
 
     return `${startTime} - ${endTime}`;
   }, [event]);

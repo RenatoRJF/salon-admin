@@ -1,7 +1,7 @@
 import { Nullable } from "primereact/ts-helpers";
 import { ToolbarProps } from "react-big-calendar";
 
-import { CustomEventProps } from "@/@types/schedule";
+import { CustomEventProps } from "@/types/schedule";
 
 export type CalendarToolbarProps = ToolbarProps<CustomEventProps>;
 

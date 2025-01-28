@@ -1,6 +1,6 @@
 import cx from "classnames";
 import { Chip } from "primereact/chip";
-import { Statuses } from "@/@types/schedule";
+import { Statuses } from "@/types/schedule";
 
 import { CalendarToolbarProps } from "./AppCalendar.types";
 
