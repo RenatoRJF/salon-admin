@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { CustomEventProps } from "@/types/schedule";
-import { generateSchedules } from "./generate-random-data";
+import { generateSchedules } from "./mock/generate-random-data";
 
 const randomSchedules = generateSchedules();
 

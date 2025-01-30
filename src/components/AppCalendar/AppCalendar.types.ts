@@ -1,11 +1,25 @@
 import { Nullable } from "primereact/ts-helpers";
-import { ToolbarProps } from "react-big-calendar";
+import { EventWrapperProps, ToolbarProps } from "react-big-calendar";
 
+import { UserInfo } from "@/types/user";
 import { CustomEventProps } from "@/types/schedule";
 
-export type CalendarToolbarProps = ToolbarProps<CustomEventProps>;
+export interface CalendarEventProps extends CustomEventProps {
+  leftPosition: number;
+}
+
+export type CalendarToolbarProps = ToolbarProps<CalendarEventProps>;
+
+export type ViewMode = "single" | "all";
+export interface CalendarEventWrapperProps
+  extends EventWrapperProps<CalendarEventProps> {
+  viewMode?: ViewMode;
+}
 
 export interface AppCalendarProps {
+  users: UserInfo[];
   date: Nullable<Date>;
-  events: CustomEventProps[];
+  filteredByUser?: UserInfo;
+  events: CalendarEventProps[];
+  onSelectUser?: (user: UserInfo | undefined) => void;
 }

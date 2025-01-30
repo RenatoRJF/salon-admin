@@ -1,12 +1,12 @@
+import { UserInfo } from "./user";
+
 export interface CustomEventProps {
   end: Date;
   id: string;
   start: Date;
-  name: string;
   title: string;
-  avatar?: string;
+  user: UserInfo;
   status: Statuses;
-  occupation: string;
 }
 
 export enum Statuses {
