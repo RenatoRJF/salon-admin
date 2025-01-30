@@ -2,25 +2,13 @@ import {
   CustomEventProps,
   Statuses as ScheduleStatuses,
 } from "@/types/schedule";
+import { users } from "./users";
 
 const Statuses = {
   COMPLETED: ScheduleStatuses.COMPLETED,
   CANCELED: ScheduleStatuses.CANCELED,
   BOOKED: ScheduleStatuses.BOOKED,
 };
-
-const names = [
-  "Sandra Black",
-  "Miguel Peterson",
-  "Janet Smith",
-  "Marcus Hodges",
-  "Christina Hall",
-  "Jacob Lester",
-  "Lawrence Turner",
-  "Michael Edwards",
-  "Sophia Carter",
-  "Emma Taylor",
-];
 
 const services = [
   "Hair cut & color",
@@ -38,39 +26,39 @@ function getRandomItem<T>(array: T[]): T {
 }
 
 export function generateSchedules(): CustomEventProps[] {
-  const schedules = [];
+  const schedules: CustomEventProps[] = [];
   const startDate = new Date(2024, 11, 1); // December 1, 2024
   const endDate = new Date(2025, 0, 31); // January 31, 2025
 
   const currentDate = new Date(startDate);
-
-  const validDurations = [30, 45, 60, 120]; // Allowed durations in minutes
+  const validDurations = [30, 45, 60]; // Allowed durations in minutes
 
   while (currentDate <= endDate) {
     if (Math.random() > 0.2) {
-      // Skip some days
       let startHour = 9;
+      const dailySchedules: CustomEventProps[] = [];
 
-      for (let i = 0; i < Math.floor(Math.random() * 4) + 3; i++) {
-        // 3-6 appointments per day
-        const startMinutes = 0;
-        const duration = getRandomItem(validDurations); // Randomly pick from valid durations
+      // Ensure at least 15 schedules per day, with some extra (15-19)
+      const numAppointments = 15 + Math.floor(Math.random() * 5);
+
+      Array.from({ length: numAppointments }).forEach(() => {
+        const startMinutes = Math.random() > 0.5 ? 0 : 30;
+        const duration = getRandomItem(validDurations);
         const endHour = startHour + Math.floor(duration / 60);
         const endMinutes = (startMinutes + duration) % 60;
 
-        // Ensure the end time is valid
-        if (endHour >= 17) break; // Limit appointments to 9 AM - 5 PM
-        if (endHour < startHour || (endHour === startHour && endMinutes <= startMinutes)) {
-          // Invalid time range detected!
-          continue;
+        if (endHour >= 17) return;
+        if (
+          endHour < startHour ||
+          (endHour === startHour && endMinutes <= startMinutes)
+        ) {
+          return;
         }
 
-        schedules.push({
+        const schedule = {
           id: crypto.randomUUID(),
-          name: getRandomItem(names),
           title: getRandomItem(services),
           status: getRandomItem(Object.values(Statuses)),
-          occupation: "Hair cut & makeup",
           start: new Date(
             currentDate.getFullYear(),
             currentDate.getMonth(),
@@ -85,18 +73,22 @@ export function generateSchedules(): CustomEventProps[] {
             endHour,
             endMinutes
           ),
-          avatar: `https://randomuser.me/api/portraits/${
-            Math.random() > 0.5 ? "women" : "men"
-          }/${Math.floor(Math.random() * 100)}.jpg`,
-        });
+          user: getRandomItem(users),
+        };
 
-        startHour = endHour + 1; // Ensure no overlap
-      }
+        dailySchedules.push(schedule);
+
+        // Ensure overlaps by randomly keeping the same hour or slightly shifting it
+        if (Math.random() > 0.3) {
+          startHour += Math.floor(Math.random() * 2);
+        }
+      });
+
+      schedules.push(...dailySchedules);
     }
 
-    currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
+    currentDate.setDate(currentDate.getDate() + 1);
   }
 
   return schedules;
 }
-
