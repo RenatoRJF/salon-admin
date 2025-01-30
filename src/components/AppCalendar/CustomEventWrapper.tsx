@@ -2,16 +2,17 @@ import dayjs from "dayjs";
 import cx from "classnames";
 import { useMemo } from "react";
 import { Tag } from "primereact/tag";
-import { EventWrapperProps } from "react-big-calendar";
 
 import UserInfo from "../UserInfo/UserInfo";
-import { CustomEventProps, Statuses } from "@/types/schedule";
+import { Statuses } from "@/types/schedule";
+import { CalendarEventWrapperProps } from "./AppCalendar.types";
 
 const CustomEventWrapper = ({
   event,
   style,
   onClick,
-}: EventWrapperProps<CustomEventProps>) => {
+  viewMode = "single",
+}: CalendarEventWrapperProps) => {
   const buttonClasses = cx(
     "absolute bg-white rounded-md min-w-[260px] min-h-[114px] border-2",
     {
@@ -37,13 +38,19 @@ const CustomEventWrapper = ({
     return `${startTime} - ${endTime}`;
   }, [event]);
 
+  const height = viewMode === "single" ? `${style?.height}%` : "auto";
+
   return (
     <div
       role="button"
       onClick={onClick}
       className={buttonClasses}
       title={`${formattedTime} ${event.title}`}
-      style={{ top: `${style?.top}%`, height: `${style?.height}%` }}
+      style={{
+        height,
+        top: `${style?.top}%`,
+        left: `${event.leftPosition}px`,
+      }}
     >
       <div className="relative px-4 py-2 bg-white rounded-m text-gray-900">
         <div className="absolute -top-0.5 -right-0">
@@ -51,9 +58,9 @@ const CustomEventWrapper = ({
         </div>
 
         <UserInfo
-          name={event.name}
-          image={event.avatar}
-          occupation={event.occupation}
+          name={event.user.name}
+          image={event.user.image}
+          occupation={event.user.occupation}
         />
 
         <div className="mt-2 text-lg font-semibold">{event.title}</div>

@@ -1,7 +1,7 @@
 "use client";
 
 import cx from "classnames";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
@@ -9,7 +9,10 @@ import { Nullable } from "primereact/ts-helpers";
 import { useQuery } from "@tanstack/react-query";
 import { ProgressBar } from "primereact/progressbar";
 
+import { UserInfo } from "@/types/user";
+import { users } from "@/api/mock/users";
 import useAppStore from "@/hooks/useAppStore";
+import { CustomEventProps } from "@/types/schedule";
 import { useIsSmallScreen } from "@/hooks/useIsSmallScreen";
 import AppCalendar from "@/components/AppCalendar/AppCalendar";
 import { getSchedulesByDate, getSchedulesDates } from "@/api/api";
@@ -21,8 +24,9 @@ export default function DashboardPage() {
   const [filter, setFilter] = useState("all");
   const { isSidebarOpen, toggleSidebar } = useAppStore();
   const [date, setDate] = useState<Nullable<Date>>(new Date());
+  const [filterByUser, setFilterByUser] = useState<UserInfo | undefined>();
 
-  const { data, isFetching } = useQuery({
+  const { data: schedules, isFetching } = useQuery({
     queryKey: ["get-schedules-by-date", date],
     queryFn: () => getSchedulesByDate(date as Date),
     initialData: [],
@@ -33,6 +37,47 @@ export default function DashboardPage() {
     queryFn: getSchedulesDates,
     initialData: [],
   });
+
+  const schedulesWithLeftPosition = useMemo(() => {
+    // Sort schedules by start time
+    schedules.sort((a, b) => {
+      if (a.start.getTime() !== b.start.getTime()) {
+        return a.start.getTime() - b.start.getTime(); // Sort by start time first
+      }
+      return a.end.getTime() - b.end.getTime(); // If start times are the same, sort by earliest end time
+    });
+
+    // Group schedules by the same hour
+    const groupedSchedules: Record<string, CustomEventProps[]> = {};
+
+    for (const schedule of schedules) {
+      const hourKey = `${schedule.start.getFullYear()}-${schedule.start.getMonth()}-${schedule.start.getDate()}-${schedule.start.getHours()}`;
+
+      if (!groupedSchedules[hourKey]) {
+        groupedSchedules[hourKey] = [];
+      }
+
+      groupedSchedules[hourKey].push(schedule);
+    }
+
+    // Assign leftPosition within each group
+    return Object.values(groupedSchedules).flatMap((group) =>
+      group.map((schedule, index) => ({
+        ...schedule,
+        leftPosition: index === 0 ? 0 : index * 272, // Assign position within the group
+      }))
+    );
+  }, [schedules]);
+
+  const filteredSchedules = useMemo(() => {
+    if (filterByUser) {
+      return schedulesWithLeftPosition.filter(
+        (schedule) => schedule.user.id === filterByUser.id
+      );
+    }
+
+    return schedulesWithLeftPosition;
+  }, [schedulesWithLeftPosition, filterByUser]);
 
   return (
     <div className="h-screen flex flex-col">
@@ -49,12 +94,12 @@ export default function DashboardPage() {
             showIcon
             value={date}
             iconPos="left"
-            icon={cx("pi pi-calendar", {
-              "pi-spin pi-spinner": isFetchingEnabledDates,
-            })}
             enabledDates={enabledDates}
             className="flex-1 md:flex-none"
             onChange={(e) => setDate(e.value)}
+            icon={cx("pi pi-calendar", {
+              "pi-spin pi-spinner": isFetchingEnabledDates,
+            })}
           />
 
           <Dropdown
@@ -79,7 +124,13 @@ export default function DashboardPage() {
           </div>
         )}
 
-        <AppCalendar events={data} date={date} />
+        <AppCalendar
+          date={date}
+          users={users}
+          events={filteredSchedules}
+          filteredByUser={filterByUser}
+          onSelectUser={setFilterByUser}
+        />
       </div>
     </div>
   );
